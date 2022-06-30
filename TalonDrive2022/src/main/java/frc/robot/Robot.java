@@ -5,6 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.*;
+import edu.wpi.first.wpilibj.XboxController;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -13,37 +17,29 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  TalonSRX rightLeader = new TalonSRX(1);
+  TalonSRX rightFollower = new TalonSRX(2);
+  TalonSRX leftLeader = new TalonSRX(3);
+  TalonSRX leftFollower = new TalonSRX(4);
+  private  XboxController driver_controller_ = new XboxController(0);
+
+
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    rightLeader.set(ControlMode.PercentOutput, 0);
+  }
 
   @Override
   public void robotPeriodic() {}
 
   @Override
-  public void autonomousInit() {}
+  public void teleopInit() {
+    rightFollower.follow(rightLeader);
+    leftFollower.follow(leftLeader);
 
-  @Override
-  public void autonomousPeriodic() {}
-
-  @Override
-  public void teleopInit() {}
+  }
 
   @Override
   public void teleopPeriodic() {}
 
-  @Override
-  public void disabledInit() {}
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void testInit() {}
-
-  @Override
-  public void testPeriodic() {}
 }
