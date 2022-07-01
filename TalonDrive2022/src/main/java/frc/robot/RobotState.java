@@ -17,15 +17,15 @@ import com.ctre.phoenix.motorcontrol.can.*;
 
 public class RobotState {
   // Pose Estimator
-  private final PoseEstimator pose_estimator_;
+  //private final PoseEstimator pose_estimator_;
 
   // Robot Speeds
   private ChassisSpeeds robot_speeds_ = new ChassisSpeeds(0, 0, 0);
 
   // Buffers
-  private final TimeInterpolatableBuffer<Pose2d> pose_buffer_;
-  private final TimeInterpolatableBuffer<Rotation2d> turret_buffer_;
-  private final TimeInterpolatableBuffer<Rotation2d> hood_buffer_;
+  //private final TimeInterpolatableBuffer<Pose2d> pose_buffer_;
+  //private final TimeInterpolatableBuffer<Rotation2d> turret_buffer_;
+  //private final TimeInterpolatableBuffer<Rotation2d> hood_buffer_;
 
   // Sensor Offsets
   private double l_encoder_offset_ = 0.0;
@@ -48,14 +48,10 @@ public class RobotState {
    */
   public RobotState() {
     // Initialize pose estimator.
-    pose_estimator_ = new PoseEstimator(new Rotation2d(), new Pose2d(),
-        Constants.kEstimatorStateStdDevs, Constants.kEstimatorLocalStdDevs,
-        Constants.kEstimatorVisionStdDevs);
+    //pose_estimator_ = new PoseEstimator(new Rotation2d(), new Pose2d(),
+    //    Constants.kEstimatorStateStdDevs, Constants.kEstimatorLocalStdDevs,
+    //    Constants.kEstimatorVisionStdDevs);
 
-    // Initialize buffers.
-    pose_buffer_ = TimeInterpolatableBuffer.createBuffer(Constants.kBufferLifetime);
-    turret_buffer_ = TimeInterpolatableBuffer.createBuffer(Constants.kBufferLifetime);
-    hood_buffer_ = TimeInterpolatableBuffer.createBuffer(Constants.kBufferLifetime);
   }
 
   /**
@@ -74,11 +70,11 @@ public class RobotState {
     gyro_ = angle;
 
     // Update the pose estimator with local measurements.
-    Pose2d pose = pose_estimator_.update(angle.minus(gyro_offset_), average_velocity,
-        l_position - l_encoder_offset_, r_position - r_encoder_offset_);
+  //  Pose2d pose = pose_estimator_.update(angle.minus(gyro_offset_), average_velocity,
+  //      l_position - l_encoder_offset_, r_position - r_encoder_offset_);
 
     // Add pose to buffer.
-    pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
+  //  pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
   }
 
   /**
@@ -87,22 +83,6 @@ public class RobotState {
    * @param timestamp         The time of capture of the frame.
    * @param vision_robot_pose The robot pose as calculated from vision at the time of capture.
    */
-  public void addVisionMeasurement(double timestamp, Pose2d vision_robot_pose) {
-    if (Robot.kUsePoseEstimator && DriverStation.isEnabled()) {
-      if (Robot.kUsePoseEstimatorInAuto || !DriverStation.isAutonomous()) {
-        // Apply odometry transform from timestamp to now to vision robot pose.
-        vision_robot_pose = vision_robot_pose.plus(getRobotPose().minus(getRobotPose(timestamp)));
-
-        last_vision_pose_ = vision_robot_pose;
-
-        // Add to pose estimator if within the tolerance.
-        if (vision_robot_pose.getTranslation().getDistance(getRobotPose().getTranslation()) <
-            Constants.kErrorTolerance) {
-          pose_estimator_.addVisionMeasurement(vision_robot_pose);
-        }
-      }
-    }
-  }
 
   /**
    * Updates the robot speeds.
@@ -114,23 +94,6 @@ public class RobotState {
     robot_speeds_ = speeds;
   }
 
-  /**
-   * Updates the hood angle buffer with new measurements.
-   *
-   * @param angle The hood angle at the current time (measured from the horizontal).
-   */
-  public void updateHoodAngle(Rotation2d angle) {
-    hood_buffer_.addSample(Timer.getFPGATimestamp(), angle);
-  }
-
-  /**
-   * Updates the turret angle buffer with new measurements.
-   *
-   * @param angle The turret angle at the current time.
-   */
-  public void updateTurretAngle(Rotation2d angle) {
-    turret_buffer_.addSample(Timer.getFPGATimestamp(), angle);
-  }
 
   /**
    * Resets the position of the robot.
@@ -144,38 +107,13 @@ public class RobotState {
     gyro_offset_ = gyro_;
 
     // Reset pose estimator.
-    pose_estimator_.resetPosition(pose, new Rotation2d());
+    //pose_estimator_.resetPosition(pose, new Rotation2d());
 
     // Reset pose buffer.
-    pose_buffer_.clear();
-    pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
+    //pose_buffer_.clear();
+    //pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
   }
 
-  /**
-   * Resets the robot position assuming that the robot is currently at (or close to) the fender.
-   * Because the robot's gyro is very accurate, it uses it to determine which of the four
-   * possible fender locations the robot is at.
-   */
-  public void resetPositionFromFender() {
-    // Get the current robot pose.
-    Pose2d robot_pose = getRobotPose();
-
-    // Find the pose to reset to (by taking the minimum of the difference in current angle with
-    // the 4 fender poses).
-    Pose2d min_pose = Constants.kFenderPoses[0];
-    double min_angle = 2 * Math.PI;
-
-    for (Pose2d p : Constants.kFenderPoses) {
-      double angle = p.getRotation().minus(robot_pose.getRotation()).getRadians();
-      if (angle < min_angle) {
-        min_angle = angle;
-        min_pose = p;
-      }
-    }
-
-    // Reset pose.
-    resetPosition(min_pose);
-  }
 
   /**
    * Sets the alliance color of the robot.
@@ -201,65 +139,19 @@ public class RobotState {
    * @param timestamp The timestamp at which to get the robot pose.
    * @return The robot pose.
    */
-  public Pose2d getRobotPose(double timestamp) {
-    return pose_buffer_.getSample(timestamp);
-  }
+  //public Pose2d getRobotPose(double timestamp) {
+  //  return pose_buffer_.getSample(timestamp);
+  //}
 
   /**
    * Returns the robot pose at the current time.
    *
    * @return The robot pose at the current time.
    */
-  public Pose2d getRobotPose() {
-    return getRobotPose(Timer.getFPGATimestamp());
-  }
+//  public Pose2d getRobotPose() {
+//   return getRobotPose(Timer.getFPGATimestamp());
+//  }
 
-  /**
-   * Returns the last vision robot pose.
-   *
-   * @return The last vision robot pose.
-   */
-  public Pose2d getLastVisionPose() {
-    return last_vision_pose_;
-  }
-
-  /**
-   * Returns the turret angle at the specified timestamp.
-   *
-   * @param timestamp The timestamp at which to get the turret angle.
-   * @return The turret angle.
-   */
-  public Rotation2d getTurretAngle(double timestamp) {
-    return turret_buffer_.getSample(timestamp);
-  }
-
-  /**
-   * Returns the turret angle at the current time.
-   *
-   * @return The turret angle at the current time.
-   */
-  public Rotation2d getTurretAngle() {
-    return getTurretAngle(Timer.getFPGATimestamp());
-  }
-
-  /**
-   * Returns the hood angle at the specified timestamp.
-   *
-   * @param timestamp The timestamp at which to get the hood angle.
-   * @return The hood angle.
-   */
-  public Rotation2d getHoodAngle(double timestamp) {
-    return hood_buffer_.getSample(timestamp);
-  }
-
-  /**
-   * Returns the hood angle at the current time.
-   *
-   * @return The hood angle at the current time.
-   */
-  public Rotation2d getHoodAngle() {
-    return getHoodAngle(Timer.getFPGATimestamp());
-  }
 
   /**
    * Returns the alliance that the robot is on.

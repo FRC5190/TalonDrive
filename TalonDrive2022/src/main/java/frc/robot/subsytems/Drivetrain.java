@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -59,27 +57,27 @@ public class Drivetrain extends SubsystemBase {
 
     // Initialize motor controllers.
     right_leader_ = new TalonSRX(1);
-    right_leader_.restoreFactoryDefaults();
-    right_leader_.setIdleMode(IdleMode.kBrake);
-    right_leader_.enableVoltageCompensation(12);
+    //right_leader_.restoreFactoryDefaults();
+    //right_leader_.setIdleMode(IdleMode.kBrake);
+    //right_leader_.enableVoltageCompensation(12);
     right_leader_.setInverted(true);
 
     right_follower_ = new TalonSRX(2);
-    right_follower_.restoreFactoryDefaults();
-    right_follower_.setIdleMode(IdleMode.kBrake);
-    right_follower_.enableVoltageCompensation(12);
+    //right_follower_.restoreFactoryDefaults();
+    //right_follower_.setIdleMode(IdleMode.kBrake);
+    //right_follower_.enableVoltageCompensation(12);
     right_follower_.follow(right_leader_);
 
     left_leader_ = new TalonSRX(3);
-    left_leader_.restoreFactoryDefaults();
-    left_leader_.setIdleMode(IdleMode.kBrake);
-    left_leader_.enableVoltageCompensation(12);
+    //left_leader_.restoreFactoryDefaults();
+    //left_leader_.setIdleMode(IdleMode.kBrake);
+    //left_leader_.enableVoltageCompensation(12);
     left_leader_.setInverted(false);
 
     left_follower_ = new TalonSRX(4);
-    left_follower_.restoreFactoryDefaults();
-    left_follower_.setIdleMode(IdleMode.kBrake);
-    left_follower_.enableVoltageCompensation(12);
+    //left_follower_.restoreFactoryDefaults();
+    //left_follower_.setIdleMode(IdleMode.kBrake);
+    //left_follower_.enableVoltageCompensation(12);
     left_follower_.follow(left_leader_);
 
     // Initialize feedforward.
@@ -144,11 +142,11 @@ public class Drivetrain extends SubsystemBase {
    * @param value Whether brake mode should be enabled.
    */
   public void setBrakeMode(boolean value) {
-    IdleMode mode = value ? IdleMode.kBrake : IdleMode.kCoast;
-    left_leader_.setIdleMode(mode);
-    left_follower_.setIdleMode(mode);
-    right_leader_.setIdleMode(mode);
-    right_follower_.setIdleMode(mode);
+    //IdleMode mode = value ? IdleMode.kBrake : IdleMode.kCoast;
+    //left_leader_.setIdleMode(mode);
+    //left_follower_.setIdleMode(mode);
+    //right_leader_.setIdleMode(mode);
+    //right_follower_.setIdleMode(mode);
   }
 
   /**
@@ -228,18 +226,18 @@ public class Drivetrain extends SubsystemBase {
    *
    * @return The kinematics for the drivetrain.
    */
-  public DifferentialDriveKinematics getKinematics() {
-    return kinematics_;
-  }
+  //public DifferentialDriveKinematics getKinematics() {
+   // return kinematics_;
+  //}
 
   /**
    * Returns the Ramsete controller for this drivetrain.
    *
    * @return The Ramsete controller for this drivetrain.
    */
-  public RamseteController getRamseteController() {
-    return ramsete_controller_;
-  }
+  //public RamseteController getRamseteController() {
+  //  return ramsete_controller_;
+  //}
 
   enum OutputType {
     PERCENT, VELOCITY

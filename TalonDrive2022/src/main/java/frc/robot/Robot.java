@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
     robot_state_.resetPosition(new Pose2d());
 
     // Setup auto.
-    setupAuto();
+    //setupAuto();
 
     // Set default commands for subsystems:
     setDefaultCommands();
@@ -117,10 +117,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     // Limit drivetrain output if scoring.
-    drivetrain_.limitOutput(score_hg_.isScheduled());
+    //drivetrain_.limitOutput(score_hg_.isScheduled());
 
     // Update telemetry.
-    telemetry_.periodic();
+    //telemetry_.periodic();
 
     }
 
