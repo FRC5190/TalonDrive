@@ -4,11 +4,23 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.*;
 import edu.wpi.first.wpilibj.XboxController;
-
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DriveTeleop;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,29 +29,123 @@ import edu.wpi.first.wpilibj.XboxController;
  * project.
  */
 public class Robot extends TimedRobot {
-  TalonSRX rightLeader = new TalonSRX(1);
-  TalonSRX rightFollower = new TalonSRX(2);
-  TalonSRX leftLeader = new TalonSRX(3);
-  TalonSRX leftFollower = new TalonSRX(4);
-  private  XboxController driver_controller_ = new XboxController(0);
+  // Constants
+  public static final boolean kUsePoseEstimator = true;
+  public static final boolean kUsePoseEstimatorInAuto = false;
 
+  // Create Xbox controller for driver.
+  private final XboxController driver_controller_ = new XboxController(0);
+
+  // Initialize robot state.
+  private final RobotState robot_state_ = new RobotState();
+
+  // Create subsystems.
+  private final Drivetrain drivetrain_ = new Drivetrain(robot_state_);
+
+
+  // Create autonomous mode selector.
+  private final SendableChooser<Command> auto_selector_ = new SendableChooser<>();
+  private Command autonomous_command_ = null;
+
+  // Keeps track of whether we need to clear buttons.
+  private boolean clear_buttons_ = false;
 
   @Override
   public void robotInit() {
-    rightLeader.set(ControlMode.PercentOutput, 0);
+    // Disable LiveWindow telemetry.
+    LiveWindow.disableAllTelemetry();
+
+    // Silence joystick warnings in sim.
+    if (RobotBase.isSimulation())
+      DriverStation.silenceJoystickConnectionWarning(true);
+
+    // Enable NetworkTables flush() at higher rate.
+    setNetworkTablesFlushEnabled(true);
+
+    // Reset robot state.
+    robot_state_.resetPosition(new Pose2d());
+
+    // Setup auto.
+    setupAuto();
+
+    // Set default commands for subsystems:
+    setDefaultCommands();
+
+    // Setup teleop controls.
+    setupTeleopControls();
+
+    // Update alliance color every second (just in case we lose comms or power).
+    addPeriodic(() -> robot_state_.setAlliance(DriverStation.getAlliance()), 1);
+
   }
 
   @Override
-  public void robotPeriodic() {}
+  public void disabledInit() {
+    // Set coast mode on drivetrain, turret, and hood to make then easier to move.
+    drivetrain_.setBrakeMode(false);
+  }
+
+  @Override
+  public void autonomousInit() {
+    // Set brake mode on turret and drivetrain.
+    drivetrain_.setBrakeMode(true);
+
+    // Set alliance color (guaranteed to be accurate here).
+    DriverStation.Alliance alliance = DriverStation.getAlliance();
+    robot_state_.setAlliance(alliance);
+
+    // Start autonomous program.
+    autonomous_command_ = auto_selector_.getSelected();
+    if (autonomous_command_ != null) {
+      autonomous_command_.schedule();
+    }
+  }
 
   @Override
   public void teleopInit() {
-    rightFollower.follow(rightLeader);
-    leftFollower.follow(leftLeader);
+    // Set brake mode on drivetrain, turret, and hood.
+    drivetrain_.setBrakeMode(true);
 
+    // Cancel autonomous program.
+    if (autonomous_command_ != null)
+      autonomous_command_.cancel();
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void robotPeriodic() {
+    // Run command scheduler.
+    CommandScheduler.getInstance().run();
+
+    // Limit drivetrain output if scoring.
+    drivetrain_.limitOutput(score_hg_.isScheduled());
+
+    // Update telemetry.
+    telemetry_.periodic();
+
+    }
+
+  /**
+   * Sets default commands for each subsystem.
+   */
+  private void setDefaultCommands() {
+    // Drivetrain:
+    drivetrain_.setDefaultCommand(new DriveTeleop(drivetrain_, driver_controller_));
+
+  }
+
+  /**
+   * Configures button / joystick bindings for teleop control (non-climb mode) if they are not
+   * already configured in the respective subsystem default commands.
+   */
+  private void setupTeleopControls() {
+   // X: drivetrain cheesy drive quick turn (in command)
+
+    // Y: none
+
+    // LS: drivetrain movement (in command)
+
+    // RS: none
+
+  }
 
 }
