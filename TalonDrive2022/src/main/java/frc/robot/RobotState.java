@@ -91,15 +91,7 @@ public class RobotState {
     gyro_offset_ = gyro_;
   }
 
-  /**
-   * Sets the alliance color of the robot.
-   *
-   * @param alliance The alliance color of the robot.
-   */
-  public void setAlliance(DriverStation.Alliance alliance) {
-    alliance_ = Objects.requireNonNullElse(alliance, DriverStation.Alliance.Invalid);
-  }
-
+ 
   /**
    * Returns the robot speeds at the current time.
    *

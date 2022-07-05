@@ -52,10 +52,10 @@ public class Drivetrain extends SubsystemBase {
     robot_state_ = robot_state;
 
     // Initialize motor controllers.
-    right_leader_ = new TalonSRX(1);
+    right_leader_ = new TalonSRX(2);
     right_leader_.setInverted(true);
 
-    right_follower_ = new TalonSRX(2);
+    right_follower_ = new TalonSRX(1);
     right_follower_.follow(right_leader_);
 
     left_leader_ = new TalonSRX(3);
@@ -78,10 +78,10 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // Read inputs.
-    io_.l_leader_supply_current = left_leader_.getOutputCurrent();
-    io_.l_follower_supply_current = left_follower_.getOutputCurrent();
-    io_.r_leader_supply_current = right_leader_.getOutputCurrent();
-    io_.r_follower_supply_current = right_follower_.getOutputCurrent();
+    io_.l_leader_supply_current = left_leader_.getStatorCurrent();
+    io_.l_follower_supply_current = left_follower_.getStatorCurrent();
+    io_.r_leader_supply_current = right_leader_.getStatorCurrent();
+    io_.r_follower_supply_current = right_follower_.getStatorCurrent();
 
     // Write outputs.
     switch (output_type_) {
@@ -92,7 +92,16 @@ public class Drivetrain extends SubsystemBase {
         left_leader_.set(ControlMode.PercentOutput, limit_output_ ?
             MathUtil.clamp(io_.l_demand, -Constants.kOutputLimit, Constants.kOutputLimit) :
             io_.l_demand);
-
+        //System.out.println("io_.r_demand " + io_.r_demand);
+        //System.out.println("io_.l_demand " + io_.l_demand);
+        //System.out.println("limit_output_ " + limit_output_);
+        
+        
+        //System.out.println("Right Leader Stator Current: " + right_leader_.getStatorCurrent());
+        //System.out.println("Left Leader Stator Current: " + left_leader_.getStatorCurrent());
+        //System.out.println("Right Follower Stator Current: " + right_follower_.getStatorCurrent());
+        //System.out.println("Left Follower Stator Current: " + left_follower_.getStatorCurrent());
+        
         break;
       case VELOCITY:
         // Calculate feedforward value and add to built-in motor controller PID.

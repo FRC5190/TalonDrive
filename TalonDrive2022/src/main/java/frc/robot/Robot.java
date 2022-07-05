@@ -74,15 +74,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // Set brake mode on turret and drivetrain.
     drivetrain_.setBrakeMode(true);
-
+  }
   @Override
   public void teleopInit() {
     // Set brake mode on drivetrain.
     drivetrain_.setBrakeMode(true);
 
-    // Cancel autonomous program.
-    if (autonomous_command_ != null)
-      autonomous_command_.cancel();
   }
 
   @Override
@@ -94,12 +91,12 @@ public class Robot extends TimedRobot {
   /**
    * Sets default commands for each subsystem.
    */
-  private void setDefaultCommands() {
+  public void setDefaultCommands() {
     // Drivetrain:
     drivetrain_.setDefaultCommand(new DriveTeleop(drivetrain_, driver_controller_));
   }
 
-  private void setupTeleopControls() {
+  public void setupTeleopControls() {
    // X: drivetrain cheesy drive quick turn (in command)
 
     // Y: none
