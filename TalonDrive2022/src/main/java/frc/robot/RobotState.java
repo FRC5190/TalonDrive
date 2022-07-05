@@ -22,11 +22,6 @@ public class RobotState {
   // Robot Speeds
   private ChassisSpeeds robot_speeds_ = new ChassisSpeeds(0, 0, 0);
 
-  // Buffers
-  //private final TimeInterpolatableBuffer<Pose2d> pose_buffer_;
-  //private final TimeInterpolatableBuffer<Rotation2d> turret_buffer_;
-  //private final TimeInterpolatableBuffer<Rotation2d> hood_buffer_;
-
   // Sensor Offsets
   private double l_encoder_offset_ = 0.0;
   private double r_encoder_offset_ = 0.0;
@@ -38,9 +33,6 @@ public class RobotState {
 
   // Last Vision Pose
   private Pose2d last_vision_pose_ = new Pose2d();
-
-  // Alliance Color
-  private DriverStation.Alliance alliance_ = DriverStation.Alliance.Invalid;
 
   /**
    * Constructs a "robot state" instance. This keeps track of various states on the robot,
@@ -68,13 +60,6 @@ public class RobotState {
     l_encoder_ = l_position;
     r_encoder_ = r_position;
     gyro_ = angle;
-
-    // Update the pose estimator with local measurements.
-  //  Pose2d pose = pose_estimator_.update(angle.minus(gyro_offset_), average_velocity,
-  //      l_position - l_encoder_offset_, r_position - r_encoder_offset_);
-
-    // Add pose to buffer.
-  //  pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
   }
 
   /**
@@ -94,7 +79,6 @@ public class RobotState {
     robot_speeds_ = speeds;
   }
 
-
   /**
    * Resets the position of the robot.
    *
@@ -105,15 +89,7 @@ public class RobotState {
     l_encoder_offset_ = l_encoder_;
     r_encoder_offset_ = r_encoder_;
     gyro_offset_ = gyro_;
-
-    // Reset pose estimator.
-    //pose_estimator_.resetPosition(pose, new Rotation2d());
-
-    // Reset pose buffer.
-    //pose_buffer_.clear();
-    //pose_buffer_.addSample(Timer.getFPGATimestamp(), pose);
   }
-
 
   /**
    * Sets the alliance color of the robot.
@@ -133,44 +109,7 @@ public class RobotState {
     return robot_speeds_;
   }
 
-  /**
-   * Returns the robot pose at the specified timestamp.
-   *
-   * @param timestamp The timestamp at which to get the robot pose.
-   * @return The robot pose.
-   */
-  //public Pose2d getRobotPose(double timestamp) {
-  //  return pose_buffer_.getSample(timestamp);
-  //}
-
-  /**
-   * Returns the robot pose at the current time.
-   *
-   * @return The robot pose at the current time.
-   */
-//  public Pose2d getRobotPose() {
-//   return getRobotPose(Timer.getFPGATimestamp());
-//  }
-
-
-  /**
-   * Returns the alliance that the robot is on.
-   *
-   * @return The alliance that the robot is on.
-   */
-  public DriverStation.Alliance getAlliance() {
-    return alliance_;
-  }
-
   public static class Constants {
-    // Pose Estimator
-    public static final Matrix<N5, N1> kEstimatorStateStdDevs =
-        VecBuilder.fill(0.02, 0.02, 0.01, 0.05, 0.05);
-    public static final Matrix<N3, N1> kEstimatorLocalStdDevs =
-        VecBuilder.fill(0.01, 0.01, 0.01);
-    public static final Matrix<N3, N1> kEstimatorVisionStdDevs =
-        VecBuilder.fill(0.05, 0.05, 0.01);
-
     public static final double kErrorTolerance = 1.5;
 
     // Buffer

@@ -21,10 +21,6 @@ public class Drivetrain extends SubsystemBase {
   private final RobotState robot_state_;
 
   // Motor Controllers
-  //private final CANSparkMax left_leader_;
-  //private final CANSparkMax left_follower_;
-  //private final CANSparkMax right_leader_;
-  //private final CANSparkMax right_follower_;
   private final TalonSRX right_leader_;
   private final TalonSRX right_follower_;
   private final TalonSRX left_leader_;
@@ -57,27 +53,15 @@ public class Drivetrain extends SubsystemBase {
 
     // Initialize motor controllers.
     right_leader_ = new TalonSRX(1);
-    //right_leader_.restoreFactoryDefaults();
-    //right_leader_.setIdleMode(IdleMode.kBrake);
-    //right_leader_.enableVoltageCompensation(12);
     right_leader_.setInverted(true);
 
     right_follower_ = new TalonSRX(2);
-    //right_follower_.restoreFactoryDefaults();
-    //right_follower_.setIdleMode(IdleMode.kBrake);
-    //right_follower_.enableVoltageCompensation(12);
     right_follower_.follow(right_leader_);
 
     left_leader_ = new TalonSRX(3);
-    //left_leader_.restoreFactoryDefaults();
-    //left_leader_.setIdleMode(IdleMode.kBrake);
-    //left_leader_.enableVoltageCompensation(12);
     left_leader_.setInverted(false);
 
     left_follower_ = new TalonSRX(4);
-    //left_follower_.restoreFactoryDefaults();
-    //left_follower_.setIdleMode(IdleMode.kBrake);
-    //left_follower_.enableVoltageCompensation(12);
     left_follower_.follow(left_leader_);
 
     // Initialize feedforward.
@@ -85,7 +69,6 @@ public class Drivetrain extends SubsystemBase {
         Constants.kLeftKs, Constants.kLeftKv, Constants.kLeftKa);
     right_feedforward_ = new SimpleMotorFeedforward(Constants.kRightKs, Constants.kRightKv,
         Constants.kRightKa);
-
   }
 
   /**
@@ -103,13 +86,6 @@ public class Drivetrain extends SubsystemBase {
     // Write outputs.
     switch (output_type_) {
       case PERCENT:
-        // Send the percent output values directly to the motor controller.
-        /*left_leader_.set(limit_output_ ?
-            MathUtil.clamp(io_.l_demand, -Constants.kOutputLimit, Constants.kOutputLimit) :
-            io_.l_demand);
-        right_leader_.set(limit_output_ ?
-            MathUtil.clamp(io_.r_demand, -Constants.kOutputLimit, Constants.kOutputLimit) :
-            io_.r_demand);*/
         right_leader_.set(ControlMode.PercentOutput, limit_output_ ?
             MathUtil.clamp(io_.r_demand, -Constants.kOutputLimit, Constants.kOutputLimit) :
             io_.r_demand);
@@ -124,9 +100,6 @@ public class Drivetrain extends SubsystemBase {
             (io_.l_demand - last_l_velocity_setpoint_) / 0.02);
         double r_feedforward = right_feedforward_.calculate(io_.r_demand,
             (io_.r_demand - last_r_velocity_setpoint_) / 0.02);
-
-        //left_pid_controller_.setReference(io_.l_demand, ControlType.kVelocity, 0, l_feedforward);
-        //right_pid_controller_.setReference(io_.r_demand, ControlType.kVelocity, 0, r_feedforward);
 
         // Store last velocity setpoints.
         last_l_velocity_setpoint_ = io_.l_demand;
@@ -220,24 +193,6 @@ public class Drivetrain extends SubsystemBase {
   public double getRightVelocity() {
     return io_.r_velocity;
   }
-
-  /**
-   * Returns the kinematics for the drivetrain.
-   *
-   * @return The kinematics for the drivetrain.
-   */
-  //public DifferentialDriveKinematics getKinematics() {
-   // return kinematics_;
-  //}
-
-  /**
-   * Returns the Ramsete controller for this drivetrain.
-   *
-   * @return The Ramsete controller for this drivetrain.
-   */
-  //public RamseteController getRamseteController() {
-  //  return ramsete_controller_;
-  //}
 
   enum OutputType {
     PERCENT, VELOCITY
