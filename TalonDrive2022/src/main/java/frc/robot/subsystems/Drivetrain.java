@@ -57,6 +57,7 @@ public class Drivetrain extends SubsystemBase {
 
     right_follower_ = new TalonSRX(1);
     right_follower_.follow(right_leader_);
+    right_follower_.setInverted(2);
 
     left_leader_ = new TalonSRX(3);
     left_leader_.setInverted(false);
