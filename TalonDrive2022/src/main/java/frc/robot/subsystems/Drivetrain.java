@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import frc.robot.RobotState;
 
 public class Drivetrain extends SubsystemBase {
@@ -25,6 +26,7 @@ public class Drivetrain extends SubsystemBase {
   private final TalonSRX right_follower_;
   private final TalonSRX left_leader_;
   private final TalonSRX left_follower_;
+  private final InvertType follower_invert_type = InvertType.FollowMaster;
   XboxController controller = new XboxController(0);
   
   // Control
@@ -57,13 +59,14 @@ public class Drivetrain extends SubsystemBase {
 
     right_follower_ = new TalonSRX(1);
     right_follower_.follow(right_leader_);
-    right_follower_.setInverted(2);
+    right_follower_.setInverted(follower_invert_type);
 
     left_leader_ = new TalonSRX(3);
     left_leader_.setInverted(false);
 
     left_follower_ = new TalonSRX(4);
     left_follower_.follow(left_leader_);
+    left_follower_.setInverted(follower_invert_type);
 
     // Initialize feedforward.
     left_feedforward_ = new SimpleMotorFeedforward(
@@ -228,15 +231,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public static class Constants {
-    // Motor Controller IDs
-    public static final int kLeftLeaderId = 1;
-    public static final int kLeftFollowerId = 2;
-    public static final int kRightLeaderId = 3;
-    public static final int kRightFollowerId = 4;
-
-    // Sensors
-    public static final int kPigeonIMUId = 17;
-
     // Hardware
     public static double kGearRatio = 6.07;
     public static double kWheelRadius = 0.0508;
